@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>登入頁面</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      font-family: sans-serif;
+    }
+
+    /* 背景圖片滾動容器 */
+    .scroll-container {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      z-index: 0;
+    }
+
+    .scroll-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      transition: transform 1s ease-in-out;
+    }
+
+    .scroll-content img {
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* 登入框 */
+    .login-box {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(255, 255, 255, 0.85);
+      padding: 30px;
+      border-radius: 10px;
+      z-index: 10;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      width: 300px;
+    }
+
+    .login-box h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .login-box button:hover {
+      background-color: #0056b3;
+    }
+
+    .error {
+      color: red;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- 背景圖片滾動 -->
+<div class="scroll-container">
+  <div class="scroll-content" id="scrollContent">
+    <img src="1.jpg" alt="圖片1">
+    <img src="2.jpg" alt="圖片2">
+    <img src="3.jpg" alt="圖片3">
+  </div>
+</div>
+
+<!-- 登入表單 -->
+<div class="login-box">
+  <h2>登入</h2>
+  <input type="text" id="username" placeholder="用戶名">
+  <input type="password" id="password" placeholder="密碼">
+  <button onclick="login()">登入</button>
+  <div id="errorMsg" class="error"></div>
+</div>
+
+<!-- JavaScript 控制 -->
+<script>
+  // 背景圖片滾動
+  const scrollContent = document.getElementById('scrollContent');
+  const images = scrollContent.querySelectorAll('img');
+  const totalImages = images.length;
+  let currentIndex = 0;
+
+  function scrollToNext() {
+    currentIndex = (currentIndex + 1) % totalImages;
+    scrollContent.style.transform = `translateY(-${currentIndex * 100}vh)`;
+  }
+
+  setInterval(scrollToNext, 5000); // 每 5 秒滾動一張
+
+  // 登入功能
+  function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorMsg = document.getElementById("errorMsg");
+    errorMsg.textContent = ""; // 清空之前的錯誤信息
+
+    // 判斷不同用戶名和密碼組合，跳轉到對應頁面
+    if (username === "李隽珞" && password === "20250527") {
+      window.location.href = "UN1.html";
+    } else if (username === "梁英媛" && password === "88888888") {
+      window.location.href = "UN2.html";
+    } else if (username === "verity" && password === "yhgusaz7") {
+      window.location.href = "UN3.html";
+    } else if (username === "黄钰希" && password === "huangyuxi") {
+      window.location.href = "UN4.html";
+    } else if (username === "劉孟妮" && password === "123456") {
+      window.location.href = "UN5.html";
+    } else if (username === "王子睿" && password === "112112") {
+      window.location.href = "UN6.html";
+    } else {
+      errorMsg.textContent = "用戶名或密碼錯誤！";
+    }
+  }
+</script>
+
+</body>
+</html>
