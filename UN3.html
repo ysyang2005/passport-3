@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8" />
+    <title>模擬聯合國 - 護照</title>
+    <style>
+        /* 保持原有样式不变，修改故事页面样式 */
+        .passport-story {
+            width: 420px;
+            height: 600px;
+            background: #fff5f8;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+            padding: 40px 30px;
+            font-family: "Noto Sans TC", "Arial", sans-serif;
+            color: #2a3b66;
+            transform-origin: left center;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            transition: transform 0.8s ease;
+        }
+        
+        .passport-story h2 {
+            text-align: center;
+            font-size: 1.6em;
+            margin-bottom: 30px;
+            color: #4B001F;
+        }
+        
+        /* 修改故事内容区域为相框样式 */
+        .story-photo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: calc(100% - 80px);
+        }
+        
+        .story-photo-frame {
+            width: 300px;
+            height: 400px;
+            border: 8px solid #4B001F;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #fff;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .story-photo-frame::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 10px solid #f8e8ed;
+            border-radius: 5px;
+            box-sizing: border-box;
+            pointer-events: none;
+        }
+        
+        .story-photo-frame img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            background-color: #f9f9f9;
+        }
+
+        /* 休息一下页面样式 - 两个水平相框，与其他页尺寸一致 */
+        .passport-break {
+            width: 420px;
+            height: 600px;
+            background: #fff5f8;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+            padding: 40px 30px;
+            font-family: "Noto Sans TC", "Arial", sans-serif;
+            color: #2a3b66;
+            transform-origin: left center;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            transition: transform 0.8s ease;
+        }
+        
+        .passport-break h2 {
+            text-align: center;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: #2a3b66;
+        }
+        
+        .break-photos-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            height: calc(100% - 80px);
+            justify-content: center;
+        }
+        
+        /* 与其他页面的photo-frame-long尺寸完全一致 */
+        .break-photo-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 180px;
+            margin: 0 auto;
+            border: 2px solid #2a3b66;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+        
+        .break-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        /* 原有样式保持不变 */
+        body {
+            margin: 0;
+            height: 100vh;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Noto Serif TC", "Georgia", serif;
+            perspective: 1400px;
+        }
+        .passport-container {
+            width: 420px;
+            height: 600px;
+            position: relative;
+            cursor: pointer;
+            user-select: none;
+        }
+        /* 第一頁封面 */
+        .passport-front {
+            width: 420px;
+            height: 600px;
+            background: #4B001F;
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            color: #D4AF37;
+            text-align: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transform-origin: left center;
+            backface-visibility: visible;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transition: transform 0.8s ease;
+        }
+        /* 第二頁背景 */
+        .passport-back {
+            width: 420px;
+            height: 600px;
+            border-radius: 20px;
+            background: #fff5f8;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+            transform-origin: left center;
+            backface-visibility: visible;
+            transform: rotateY(180deg);
+            transition: transform 0.8s ease;
+        }
+        .passport-back .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            opacity: 0.1;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            user-select: none;
+        }
+        .passport-back .content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .welcome-text {
+            font-family: "Noto Sans TC", "Arial", sans-serif;
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #4B001F;
+            text-align: center;
+            line-height: 1.6;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            white-space: pre-line;
+        }
+        .welcome-text span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .welcome-text.animate span:nth-child(1) {
+            animation-name: riseUpFadeIn;
+            animation-duration: 0.6s;
+            animation-fill-mode: forwards;
+            animation-delay: 0s;
+        }
+        .welcome-text.animate span:nth-child(3) {
+            animation-name: riseUpFadeIn;
+            animation-duration: 0.6s;
+            animation-fill-mode: forwards;
+            animation-delay: 0.3s;
+        }
+        .welcome-text.animate span:nth-child(5) {
+            animation-name: riseUpFadeIn;
+            animation-duration: 0.6s;
+            animation-fill-mode: forwards;
+            animation-delay: 0.6s;
+        }
+        @keyframes riseUpFadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        /* 第三頁至第七頁樣式 */
+        .passport-third,.passport-fourth,.passport-fifth,.passport-sixth,.passport-seventh {
+            width: 420px;
+            height: 600px;
+            background: #fff5f8;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.15);
+            position: absolute;
+            top: 0;
+            left: 0;
+            box-sizing: border-box;
+            padding: 40px 30px;
+            font-family: "Noto Sans TC", "Arial", sans-serif;
+            color: #2a3b66;
+            transform-origin: left center;
+            backface-visibility: hidden;
+            transform: rotateY(180deg);
+            transition: transform 0.8s ease;
+        }
+        .photo-frame {
+            width: 220px;
+            height: 280px;
+            margin: 0 auto 15px auto;
+            border: 3px solid #2a3b66;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        .delegate-text {
+            text-align: center;
+            font-size: 1.3em;
+            color: #2a3b66;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        .emblem {
+            font-size: 6em;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .title-cn {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 0.15em;
+        }
+        .title-en {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 0.1em;
+        }
+        .subtitle-cn {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 0.15em;
+        }
+        .subtitle-en {
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 0.1em;
+        }
+
+        /* 第四至第六頁照片樣式 */
+        .passport-fourth h2,
+        .passport-fifth h2,
+        .passport-sixth h2,
+        .passport-break h2 {
+            text-align: center;
+            font-size: 1.6em;
+            margin-bottom: 20px;
+            color: #2a3b66;
+        }
+        .passport-fourth .section,
+        .passport-fifth .section,
+        .passport-sixth .section {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .passport-fourth .section h3,
+        .passport-fifth .section h3,
+        .passport-sixth .section h3 {
+            font-size: 1.2em;
+            margin-bottom: 8px;
+            color: #4B001F;
+        }
+        .passport-fourth .photo-frame-long,
+        .passport-fifth .photo-frame-long,
+        .passport-sixth .photo-frame-long,
+        .break-photo-frame {
+            width: 100%;
+            max-width: 360px;
+            height: 180px;
+            margin: 0 auto;
+            border: 2px solid #2a3b66;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .passport-fourth .photo-frame-long img,
+        .passport-fifth .photo-frame-long img,
+        .passport-sixth .photo-frame-long img,
+        .break-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* 第七頁樣式 */
+        .passport-seventh {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .closing-message {
+            font-size: 1.8em;
+            line-height: 2.2;
+            margin-bottom: 150px;
+            color: #4B001F;
+            font-weight: 500;
+        }
+        .footer-notes {
+            position: absolute;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.6;
+            opacity: 0.75;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="passport-container" id="passportContainer" aria-label="模擬聯合國護照" tabindex="0">
+        <!-- 第一頁 -->
+        <div class="passport-front" aria-hidden="false">
+            <div class="emblem">UN</div>
+            <div class="title-cn">模擬聯合國</div>
+            <div class="title-en">UNITED NATIONS</div>
+            <div class="subtitle-cn">護照</div>
+            <div class="subtitle-en">PASSPORT</div>
+        </div>
+
+        <!-- 第二頁 -->
+        <div class="passport-back" aria-hidden="true">
+            <img class="watermark" src="3.jpg" alt="聯合國水印" />
+            <div class="content">
+                <div class="welcome-text">
+                    <span>歡迎雷佳欣成為</span><br>
+                    <span>第二屆<br>蓮峰模擬聯合國</span><br>
+                    <span>參會代表</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三頁 -->
+        <div class="passport-third" aria-hidden="true">
+            <h2>代表信息</h2>
+            <div class="photo-frame">
+                <img src="DSC04257(1).jpg" alt="代表相片" />
+            </div>
+            <p class="delegate-text">雷佳欣</p>
+        </div>
+
+        <!-- 第四頁 -->
+        <div class="passport-fourth" aria-hidden="true">
+            <h2>活動集錦</h2>
+
+            <div class="section">
+                <h3>開幕式</h3>
+                <div class="photo-frame-long">
+                    <img src="UN1.jpg" alt="開幕式照片" />
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>大合影</h3>
+                <div class="photo-frame-long">
+                    <img src="UN2.jpg" alt="大合影照片" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五頁 -->
+        <div class="passport-fifth" aria-hidden="true">
+            <h2>活動集錦</h2>
+
+            <div class="section">
+                <h3>开会啦</h3>
+                <div class="photo-frame-long">
+                    <img src="UN3.jpg" alt="開幕式照片" />
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>认真讨论</h3>
+                <div class="photo-frame-long">
+                    <img src="UN4.jpg" alt="大合影照片" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 关于我的故事页面（带相框） -->
+        <div class="passport-story" aria-hidden="true">
+            <h2>关于我的故事</h2>
+            <div class="story-photo-container">
+                <div class="story-photo-frame">
+                    <img src="DSC04257(1).jpg" alt="我的故事照片" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 休息一下页面（两个水平相框，与其他页尺寸一致） -->
+        <div class="passport-break" aria-hidden="true">
+            <h2>休息一下</h2>
+            <div class="break-photos-container">
+                <div class="break-photo-frame">
+                    <img src="relax1.jpg" alt="休息时光照片1" />
+                </div>
+                <div class="break-photo-frame">
+                    <img src="relax2.jpg" alt="休息时光照片2" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 第六頁 -->
+        <div class="passport-sixth" aria-hidden="true">
+            <h2>活動集錦</h2>
+
+            <div class="section">
+                <h3>闭幕式</h3>
+                <div class="photo-frame-long">
+                    <img src="5.jpg" alt="開幕式照片" />
+                </div>
+            </div>
+
+            <div class="section">
+                <h3>闭幕式合影</h3>
+                <div class="photo-frame-long">
+                    <img src="6.jpg" alt="大合影照片" />
+                </div>
+            </div>
+        </div>
+
+        <!-- 第七頁 -->
+        <div class="passport-seventh" aria-hidden="true">
+            <div class="closing-message">
+                今年的活動<br>到此就告一段落啦<br>
+                我們明年再見
+            </div>
+            
+            <div class="footer-notes">
+                数字护照<br>
+                策划:粤港澳大湾区博士协会<br>
+                制作:濠盛国际有限公司<br>
+                版权所有:澳门模拟联合国交流协会
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 翻頁音效 -->
+    <audio id="flipSound" src="https://actions.google.com/sounds/v1/foley/page_turns.ogg" preload="auto"></audio>
+
+    <script>
+        const passportContainer = document.getElementById('passportContainer');
+        const flipSound = document.getElementById('flipSound');
+        const welcomeText = document.querySelector('.welcome-text');
+
+        // 頁面數組，包含故事頁和新增的休息頁
+        const pages = [
+            document.querySelector('.passport-front'),
+            document.querySelector('.passport-back'),
+            document.querySelector('.passport-third'),
+            document.querySelector('.passport-fourth'),
+            document.querySelector('.passport-fifth'),
+            document.querySelector('.passport-story'), // 故事頁
+            document.querySelector('.passport-break'),  // 休息一下頁
+            document.querySelector('.passport-sixth'),
+            document.querySelector('.passport-seventh')
+        ];
+
+        let currentPage = 0;
+
+        function showPage(index) {
+            pages.forEach((page, i) => {
+                if(i === index){
+                    page.style.transform = 'rotateY(0deg)';
+                    page.setAttribute('aria-hidden', 'false');
+                    if(i === 0) {
+                        pages[1].style.display = 'none'; 
+                    } else {
+                        pages[1].style.display = 'block';
+                    }
+                } else {
+                    page.style.transform = 'rotateY(180deg)';
+                    page.setAttribute('aria-hidden', 'true');
+                    if(i === 1 && index !== 0) {
+                        pages[1].style.display = 'block';
+                    }
+                }
+            });
+        }
+
+        showPage(currentPage);
+
+        passportContainer.addEventListener('click', () => {
+            flipSound.currentTime = 0;
+            flipSound.play();
+            currentPage = (currentPage + 1) % pages.length; // 自動循環到第一頁
+            showPage(currentPage);
+            if(currentPage === 1){
+                welcomeText.classList.remove('animate');
+                void welcomeText.offsetWidth;
+                welcomeText.classList.add('animate');
+            }
+        });
+
+        passportContainer.addEventListener('keydown', (e) => {
+            if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){
+                e.preventDefault();
+                flipSound.currentTime = 0;
+                flipSound.play();
+                currentPage = (currentPage + 1) % pages.length;
+                showPage(currentPage);
+                if(currentPage === 1){
+                    welcomeText.classList.remove('animate');
+                    void welcomeText.offsetWidth;
+                    welcomeText.classList.add('animate');
+                }
+            }
+            else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+                e.preventDefault();
+                flipSound.currentTime = 0;
+                flipSound.play();
+                currentPage = (currentPage - 1 + pages.length) % pages.length;
+                showPage(currentPage);
+                if(currentPage === 1){
+                    welcomeText.classList.remove('animate');
+                    void welcomeText.offsetWidth;
+                    welcomeText.classList.add('animate');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+    
